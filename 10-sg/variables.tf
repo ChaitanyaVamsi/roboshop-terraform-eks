@@ -20,6 +20,7 @@ variable "sg_names" {
     "ingress_alb",
     #backend alb
     # "backend_alb"
-
+    "eks_control_plane",
+    "eks_node"
   ]
 }
