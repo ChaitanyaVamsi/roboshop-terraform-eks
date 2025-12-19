@@ -1,0 +1,23 @@
+terraform init
+terraform init -reconfigure
+terraform apply -auto-apply
+terraform destroy -auto-apply
+
+Note
+---------------
+The same AWS IAM identity (aws configure / profile / role) that created the EKS cluster MUST be used on the bastion to run kubectl,
+OR that bastion IAM identity must be explicitly added to the cluster access.
+If this does not match →
+👉 kubectl will fail with
+
+📝 Important note to store
+
+IAM user TuserIam is the EKS cluster owner
+Any machine (bastion/laptop) running kubectl must:
+
+Use TuserIam AWS credentials OR
+
+Be explicitly added to EKS access (aws-auth / access entries)
+
+aws sts get-caller-identity
+aws eks update-kubeconfig --region us-east-1 --name roboshop-dev
