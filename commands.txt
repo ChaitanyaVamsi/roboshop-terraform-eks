@@ -21,3 +21,12 @@ Be explicitly added to EKS access (aws-auth / access entries)
 
 aws sts get-caller-identity
 aws eks update-kubeconfig --region us-east-1 --name roboshop-dev
+
+
+
+
+kubectl cordon ip-10-0-12-51.ec2.internal - when nodes are on corron no pods will be sheduled
+
+kubectl drain ip-10-0-12-51.ec2.internal - kubectl drain safely empties a node by evicting pods while respecting Kubernetes safety rules.
+
+kubectl taint node upgrade=true:NoSchedule-
