@@ -1,0 +1,126 @@
+pipeline {
+
+    /*
+     * Run on any available Jenkins agent
+     * (Alternatively, you can restrict to a specific node – see commented section below)
+     */
+    agent any
+
+    /*
+    // Example: Run on a specific Jenkins node
+    agent {
+        node {
+            label 'slave'
+        }
+    }
+    */
+
+    /*
+     * Global environment variables
+     * These can be used across all stages
+     */
+    environment {
+        PROJECT   = 'roboshop'
+        COMPONENT = 'catalogue'
+    }
+
+    /*
+     * Pipeline-level options
+     */
+    options {
+        // Abort the build if it runs longer than 10 minutes
+        timeout(time: 10, unit: 'MINUTES')
+
+        // Prevent multiple concurrent executions of this pipeline
+        disableConcurrentBuilds()
+
+        // Enable colored output in console logs
+        ansiColor('xterm')
+    }
+
+    stages {
+
+        /*
+         * Initialize Terraform
+         */
+        stage('Init') {
+            steps {
+                withAWS(region: 'us-east-1', credentials: 'aws-creds') {
+                    sh '''
+                        cd 10-sg
+                        terraform init
+                    '''
+                }
+            }
+        }
+
+        /*
+         * Terraform plan stage
+         * Shows what changes will be applied
+         */
+        stage('Plan') {
+            steps {
+                withAWS(region: 'us-east-1', credentials: 'aws-creds') {
+                    sh '''
+                        cd 10-sg
+                        terraform plan
+                    '''
+                }
+            }
+        }
+
+        /*
+         * Deployment stage
+         * Requires manual approval before continuing
+         */
+        stage('Deploy') {
+
+            /*
+             * Manual approval step
+             */
+            input {
+                message 'Should we continue with Terraform apply?'
+                ok 'Yes, we should.'
+                submitter 'alice,bob'
+
+                parameters {
+                    string(
+                        name: 'PERSON',
+                        defaultValue: 'Mr Jenkins',
+                        description: 'Who should I say hello to?'
+                    )
+                }
+            }
+
+            steps {
+                withAWS(region: 'us-east-1', credentials: 'aws-creds') {
+                    sh '''
+                        cd 10-sg
+                        terraform apply -auto-approve
+                    '''
+                }
+            }
+        }
+
+        /*
+         * Trigger a downstream Jenkins job
+         */
+     /*    stage('Trigger downstream job') {
+            steps {
+                script {
+                    build job: '10-sg',
+
+                          // Trigger the downstream job asynchronously (fire-and-forget).
+                          // This is used when the downstream job is independent
+                          // and does not affect the success of this pipeline.
+                          wait: false,
+
+                          // Ignore downstream job failures so that this pipeline
+                          // can complete successfully regardless of its outcome.
+                          propagate: false
+                }
+            }
+        } */
+
+    }
+}
