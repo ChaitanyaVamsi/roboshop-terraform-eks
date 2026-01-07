@@ -1,0 +1,42 @@
+pipeline{
+  agent any
+
+/*  // for specific node
+  agent{
+    node{
+      label 'slave'
+    }
+  }
+   */
+   environment {
+    PROJECT = "roboshop"
+    COMPONENT = "catalogue"
+   }
+
+   options{
+    timeout(time:10, unit: 'MINUTES')
+    disableConcurrentBuilds()
+   }
+
+   stages{
+    stage('init'){
+      steps{
+        sh """
+          terraform init
+        """
+      }
+    }
+
+    stage('Plan'){
+      sh """
+        terraform plan
+      """
+    }
+
+    stage('Deploy'){
+      
+    }
+
+
+   }
+}
