@@ -109,10 +109,18 @@ pipeline {
             steps {
                 script {
                     build job: '10-sg',
-                          wait: false,        // Do not wait for downstream job completion
-                          propagate: false    // Do not fail this job if downstream fails
+
+                          // Trigger the downstream job asynchronously (fire-and-forget).
+                          // This is used when the downstream job is independent
+                          // and does not affect the success of this pipeline.
+                          wait: false,
+
+                          // Ignore downstream job failures so that this pipeline
+                          // can complete successfully regardless of its outcome.
+                          propagate: false
                 }
             }
         }
+
     }
 }
