@@ -30,3 +30,5 @@ kubectl cordon ip-10-0-12-51.ec2.internal - when nodes are on cordon no pods wil
 kubectl drain ip-10-0-12-51.ec2.internal - kubectl drain safely empties a node by evicting pods while respecting Kubernetes safety rules.
 
 kubectl taint node upgrade=true:NoSchedule-
+
+for i in 90/ 80/; do cd $i;terraform destroy -auto-approve; cd .. ;done
