@@ -1,0 +1,106 @@
+pipeline {
+
+    /*
+     * Run on any available Jenkins agent
+     * (Alternatively, you can restrict to a specific node – see commented section below)
+     */
+    agent any
+
+    /*
+    // Example: Run on a specific Jenkins node
+    agent {
+        node {
+            label 'slave'
+        }
+    }
+    */
+
+    /*
+     * Global environment variables
+     * These can be used across all stages
+     */
+    environment {
+        PROJECT   = 'roboshop'
+        COMPONENT = 'catalogue'
+    }
+
+    /*
+     * Pipeline-level options
+     */
+    options {
+        // Abort the build if it runs longer than 10 minutes
+        timeout(time: 10, unit: 'MINUTES')
+
+        // Prevent multiple concurrent executions of this pipeline
+        disableConcurrentBuilds()
+
+        // Enable colored output in console logs
+        ansiColor('xterm')
+    }
+
+    stages {
+
+        /*
+         * Initialize Terraform
+         */
+        stage('Init') {
+            steps {
+                withAWS(region: 'us-east-1', credentials: 'aws-creds') {
+                    sh '''
+                        cd 40-ecr
+                        terraform init
+                    '''
+                }
+            }
+        }
+
+        /*
+         * Terraform plan stage
+         * Shows what changes will be applied
+         */
+        stage('Plan') {
+            steps {
+                withAWS(region: 'us-east-1', credentials: 'aws-creds') {
+                    sh '''
+                        cd 40-ecr
+                        terraform plan
+                    '''
+                }
+            }
+        }
+
+        /*
+         * Deployment stage
+         * Requires manual approval before continuing
+         */
+        stage('Deploy') {
+
+            /*
+             * Manual approval step
+             */
+            input {
+                message 'Should we continue with Terraform apply?'
+                ok 'Approve'
+                submitter 'alice,bob'
+
+                parameters {
+                    text(
+                        name: 'Approval Reason',
+                        defaultValue: '',
+                        description: 'Reason for approving this Terraform apply'
+                    )
+                }
+            }
+
+            steps {
+                withAWS(region: 'us-east-1', credentials: 'aws-creds') {
+                    sh '''
+                        cd 40-ecr
+                        terraform apply -auto-approve
+                    '''
+                }
+            }
+        }
+
+    }
+}
