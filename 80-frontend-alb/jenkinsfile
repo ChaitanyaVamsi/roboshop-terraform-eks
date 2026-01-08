@@ -78,7 +78,7 @@ pipeline {
             /*
              * Manual approval step
              */
-            input {
+           /*  input {
                 message 'Should we continue with Terraform apply?'
                 ok 'Approve'
                 submitter 'alice,bob'
@@ -90,7 +90,7 @@ pipeline {
                         description: 'Reason for approving this Terraform apply'
                     )
                 }
-            }
+            } */
 
             steps {
                 withAWS(region: 'us-east-1', credentials: 'aws-creds') {
