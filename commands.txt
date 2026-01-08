@@ -31,4 +31,4 @@ kubectl drain ip-10-0-12-51.ec2.internal - kubectl drain safely empties a node b
 
 kubectl taint node upgrade=true:NoSchedule-
 
-for i in 90/ 80/; do cd $i;terraform destroy -auto-approve; cd .. ;done
+for i in 90-eks/ 80-frontend-alb/ 70-acm/ 40-ecr/ 30-sg-rules/ 20-bastion/ 10-sg/ 00-vpc/; do cd $i;terraform destroy -auto-approve; cd .. ;done
