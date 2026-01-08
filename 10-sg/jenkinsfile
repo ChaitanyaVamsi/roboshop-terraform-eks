@@ -142,7 +142,7 @@ pipeline {
         stage('ALB'){
             steps{
               script{
-                  build job: ' 80-fontend-alb'
+                  build job: '80-frontend-alb',
                   wait: false,
                   propagate: false
               }
