@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "catalogue" {
-  name                 = "roboshop/catalogue"
+  name                 = "${var.project_name}/catalogue"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
@@ -9,7 +9,7 @@ resource "aws_ecr_repository" "catalogue" {
 }
 
 resource "aws_ecr_repository" "user" {
-  name                 = "roboshop/user"
+  name                 = "${var.project_name}/user"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
@@ -19,7 +19,7 @@ resource "aws_ecr_repository" "user" {
 }
 
 resource "aws_ecr_repository" "cart" {
-  name                 = "roboshop/cart"
+  name                 = "${var.project_name}/cart"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
@@ -29,7 +29,7 @@ resource "aws_ecr_repository" "cart" {
 }
 
 resource "aws_ecr_repository" "shipping" {
-  name                 = "roboshop/shipping"
+  name                 = "${var.project_name}/shipping"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
@@ -39,7 +39,7 @@ resource "aws_ecr_repository" "shipping" {
 }
 
 resource "aws_ecr_repository" "payment" {
-  name                 = "roboshop/payment"
+  name                 = "${var.project_name}/payment"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
@@ -49,7 +49,7 @@ resource "aws_ecr_repository" "payment" {
 }
 
 resource "aws_ecr_repository" "frontend" {
-  name                 = "roboshop/frontend"
+  name                 = "${var.project_name}/frontend"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {

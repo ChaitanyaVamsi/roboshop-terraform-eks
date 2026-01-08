@@ -107,6 +107,16 @@ pipeline {
                       }
                   }
 
+                  stage('ecr'){
+                      steps{
+                            script{
+                                build job: '40-ecr',
+                                wait: false,
+                                propagate: false
+                            }
+                      }
+                  }
+
                   stage('acm'){
                       steps{
                             script{
@@ -116,6 +126,26 @@ pipeline {
                             }
                       }
                   }
+
+                  stage('eks'){
+                      steps{
+                            script{
+                                build job: '90-eks',
+                                wait: false,
+                                propagate: false
+                            }
+                      }
+                  }
+            }
+        }
+
+        stage('ALB'){
+            steps{
+              script{
+                  build job: ' 80-fontend-alb'
+                  wait: false,
+                  propagate: false
+              }
             }
         }
 
