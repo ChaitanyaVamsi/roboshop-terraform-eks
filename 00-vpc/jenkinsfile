@@ -80,14 +80,14 @@ pipeline {
              */
             input {
                 message 'Should we continue with Terraform apply?'
-                ok 'Yes, we should.'
+                ok 'Approve'
                 submitter 'alice,bob'
 
                 parameters {
-                    string(
-                        name: 'PERSON',
-                        defaultValue: 'Mr Jenkins',
-                        description: 'Who should I say hello to?'
+                    text(
+                        name: 'Approval Reason',
+                        defaultValue: '',
+                        description: 'Reason for approving this Terraform apply'
                     )
                 }
             }
