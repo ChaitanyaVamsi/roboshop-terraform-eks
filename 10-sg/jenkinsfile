@@ -74,6 +74,7 @@ pipeline {
          * Requires manual approval before continuing
          */
         stage('Deploy') {
+
             steps {
                 withAWS(region: 'us-east-1', credentials: 'aws-creds') {
                     sh '''
@@ -84,25 +85,39 @@ pipeline {
             }
         }
 
-        /*
-         * Trigger a downstream Jenkins job
-         */
-     /*    stage('Trigger downstream job') {
-            steps {
-                script {
-                    build job: '10-sg',
+        stage('Parallel Trigger'){
+            parallel{
+                  stage('bastion'){
+                      steps{
+                            script{
+                                build job: '20-bastion',
+                                wait: false,
+                                propagate: false
+                            }
+                      }
+                  }
 
-                          // Trigger the downstream job asynchronously (fire-and-forget).
-                          // This is used when the downstream job is independent
-                          // and does not affect the success of this pipeline.
-                          wait: false,
+                  stage('sg-rules'){
+                      steps{
+                            script{
+                                build job: '30-sg-rules',
+                                wait: false,
+                                propagate: false
+                            }
+                      }
+                  }
 
-                          // Ignore downstream job failures so that this pipeline
-                          // can complete successfully regardless of its outcome.
-                          propagate: false
-                }
+                  stage('acm'){
+                      steps{
+                            script{
+                                build job: '70-acm',
+                                wait: false,
+                                propagate: false
+                            }
+                      }
+                  }
             }
-        } */
+        }
 
     }
 }
